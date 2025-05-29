@@ -1,4 +1,4 @@
-Holiday Calendar Website
+#Holiday Calendar Website
 This is a Django web application that lets users easily find holidays on any given date. Just input a date, and the app will show you a list of holidays observed on that day. Each holiday listed includes a clickable link directly to its Wikipedia page for more detailed information.
 
 Features
