@@ -17,7 +17,7 @@ def get_holidays(request):
         # Debug: Print the entire request GET data
         print("Request GET data:", request.GET)
 
-        api_key = "stoxBwukT9zF4RQG48jaaFLvMG2UhP9E"
+        api_key = ""# put your own api key here
         date = request.GET.get('date')
         print("Date from request:", date)  # Debug print
         country = request.GET.get("country", "in")
