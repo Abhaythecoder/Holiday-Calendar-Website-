@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #282c34, #1d2025);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Form Container */
+        form {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4ecca3;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background: #1f2329;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        input:focus {
+            outline: none;
+            background: #4ecca3;
+            color: #1f2329;
+        }
+
+        #login_button {
+            background: #4ecca3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #login_button:hover {
+            background: #1f2329;
+            color: #4ecca3;
+        }
+
+        /* Error Message */
+        .error_message {
+            color: #f44336;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="loginForm" action="{% url 'login' %}" method="POST">
+
+        {% csrf_token %}
+        {% if error_message %}
+        {{ form.as_p }}
+        <!-- <p style="color: red;">{{ error_message }}</p> -->
+        {% endif %}
+        <h1>Login</h1>
+        <div id="errorContainer" class="error_message" style="display: none;"></div>
+        <div>
+            <label for="username">Username:</label>
+            <input id="username" type="text" name="username" placeholder="Enter username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input id="password" type="password" name="password" placeholder="Enter password" minlength="6" required>
+        </div>
+        <input id="login_button" type="submit" value="Login">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("loginForm");
+            const errorContainer = document.getElementById("errorContainer");
+            const usernameInput = document.getElementById("username");
+            const passwordInput = document.getElementById("password");
+
+            form.addEventListener("submit", (event) => {
+                let errors = [];
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username) {
+                    errors.push("Username cannot be empty.");
+                }
+
+                if (password.length < 6) {
+                    errors.push("Password must be at least 6 characters.");
+                }
+
+                if (errors.length > 0) {
+                    event.preventDefault(); // Prevent form submission
+                    errorContainer.innerText = errors.join(" ");
+                    errorContainer.style.display = "block";
+                } else {
+                    errorContainer.style.display = "none";
+                    alert("Form submitted successfully!"); // Replace with server logic if needed
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

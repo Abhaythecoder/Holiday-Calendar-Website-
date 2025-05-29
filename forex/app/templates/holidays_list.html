@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holidays</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #282c34, #1d2025);
+            color: #fff;
+            line-height: 1.6;
+            padding: 0;
+            /* Remove body padding */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            /* Remove any default margin */
+        }
+
+        /* Container Styling */
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(0);
+            /* Ensures it's centered vertically */
+        }
+
+        /* Heading */
+        h1 {
+            font-size: 3rem;
+            color: #4ecca3;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Date Input Styling */
+        input[type="date"] {
+            background: #1f2329;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="date"]:hover {
+            background: #4ecca3;
+            color: #1f2329;
+        }
+
+        button {
+            background: #4ecca3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #1f2329;
+            color: #4ecca3;
+        }
+
+        /* Error Message */
+        p.error {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        /* Holidays List */
+        ul.holiday-list {
+            list-style: none;
+            margin-top: 30px;
+            padding: 0;
+            color: #ccc;
+        }
+
+        ul.holiday-list li {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        ul.holiday-list li:hover {
+            background: #4ecca3;
+            color: #1f2329;
+            transform: translateX(10px);
+        }
+
+        ul.holiday-list li strong {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        ul.holiday-list li span {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            input[type="date"],
+            button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Check Holidays</h1>
+
+        <form method="GET" action="{% url 'get_holidays' %}">
+            {% csrf_token %}
+
+            <label for="date">Select a date</label>
+            <input type="date" id="date" name="date">
+            <button type="submit">Check Holidays</button>
+        </form>
+
+        <p class="error" style="display: none;"></p>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% elif holidays %}
+        <ul class="holiday-list">
+            {% for holiday in holidays %}
+            <li>
+                <a href="{% url 'holi_wiki' %}?holiday_name={{ holiday.name|urlencode }}" target="_blank">
+                    <strong>{{ holiday.name }}</strong> - {{ holiday.date.iso }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No holidays found.</p>
+        {% endif %}
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const dateInput = document.getElementById("date");
+            const errorElement = document.querySelector(".error");
+
+            // Ensure the date input is focused on load for better UX
+            dateInput.focus();
+
+            // Check if date format is correct using regex
+            form.addEventListener("submit", function (event) {
+                const dateValue = dateInput.value;
+                const dateFormat = /^\d{4}-\d{2}-\d{2}$/; // yyyy-mm-dd format
+
+                if (!dateValue.match(dateFormat)) {
+                    event.preventDefault();
+                    errorElement.textContent = "Invalid date format. Please use yyyy-mm-dd.";
+                    errorElement.style.display = "block";
+                } else {
+                    errorElement.style.display = "none";
+                }
+            });
+
+            // Hide error when user starts typing again
+            dateInput.addEventListener("input", function () {
+                if (errorElement) {
+                    errorElement.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
